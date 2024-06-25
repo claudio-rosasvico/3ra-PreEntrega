@@ -1,0 +1,102 @@
+body {
+  /* flex-direction: column;
+  align-items: center; */
+  background-color: #228B22;
+  color: white;
+  font-family: Arial, sans-serif;
+  /* text-align: center; */
+  height: 100vh;
+  /* justify-content: center; */
+  margin: 0;
+}
+
+h1 {
+  font-size: 2.5em;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px #000000;
+}
+
+p {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  line-height: 1.6
+}
+
+.logo {
+  max-width: 200px;
+  height: auto;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #0f5e0f;
+}
+
+.mesa {
+  height: 150px;
+}
+
+.cardMano {
+  width: 20%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cardMesa {
+  width: 20%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  /* margin: 0 auto; */
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1.2em;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #444;
+}
+
+.cardsManoCPU, .cardsManoUser {
+  height: 50%;
+}
+
+.mesaUser, .mesaCPU {
+  border: solid 5px;
+  border-color: #124e12;
+  height: 50%;
+}
+
+/* .container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+} */
+
+.fullscreen-gif {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.fullscreen-gif img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
