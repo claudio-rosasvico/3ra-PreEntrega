@@ -76,27 +76,3 @@ button:hover {
   height: 50%;
 }
 
-/* .container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-} */
-
-.fullscreen-gif {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-}
-
-.fullscreen-gif img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
