@@ -17,7 +17,7 @@ h1 {
   text-shadow: 2px 2px 4px #000000;
 }
 
-p {
+#saludo {
   max-width: 500px;
   margin: 20px auto;
   padding: 10px;

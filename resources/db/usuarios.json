@@ -1,23 +1,19 @@
 [
     {
         "nombre": "CLAUDIO",
-        "contraseña": "123",
-        "img": "claudio"
+        "contraseña": "123"
     },
     {
         "nombre": "JOAQUIN",
-        "contraseña": "tutor",
-        "img": "joaquin"
+        "contraseña": "tutor"
     },
     {
         "nombre": "FERRAN",
-        "contraseña": "profe",
-        "img": "ferran"
+        "contraseña": "profe"
     },
     {
         "nombre": "PEPE",
-        "contraseña": "pepe",
-        "img": "pepe"
+        "contraseña": "pepe"
     }
     
 ]

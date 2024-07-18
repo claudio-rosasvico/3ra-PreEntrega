@@ -55,10 +55,10 @@ class Carta {
     }
 
     darValorEnvido() {
-        if (this.numero != 10 && this.numero != 11 && this.numero != 12) {
-            this.darValorEnvido = this.numero
+        if (this.numero == 10 || this.numero == 11 || this.numero == 12) {
+            this.valorEnvido = 0
         } else {
-            this.darValorEnvido = 0
+            this.valorEnvido = this.numero
         }
     }
 
@@ -142,6 +142,8 @@ class Partida {
     constructor() {
         this.user
         this.CPU = new Jugador('CPU', false)
+        this.puntosPartida = 0
+        this.truco = false
     }
 
     comenzar(nombre) {
@@ -172,11 +174,11 @@ class Partida {
         this.calculoEnvido(this.user)
     }
 
-    ganadorPartida(cartaUser, cartaCPU) {
+    ganadorMano(cartaUser, cartaCPU) {
         if (cartaUser.valorTruco > cartaCPU.valorTruco) {
-            this.user.puntos += 1
+            this.puntosPartida += 1
         } else if (cartaUser.valorTruco < cartaCPU.valorTruco) {
-            this.CPU.puntos += 1
+            this.puntosPartida -= 1
         }
     }
 
@@ -188,20 +190,59 @@ class Partida {
             } else {
                 jugador.puntosEnvido = jugador.cartas[0].valorEnvido + jugador.cartas[1].valorEnvido + 20;
             };
-        }
-        if (jugador.cartas[0].palo == jugador.cartas[2].palo) {
+        } else if (jugador.cartas[0].palo == jugador.cartas[2].palo) {
             jugador.puntosEnvido = jugador.cartas[0].valorEnvido + jugador.cartas[2].valorEnvido + 20;
-        }
-        if (jugador.cartas[1].palo == jugador.cartas[2].palo) {
+        } else if (jugador.cartas[1].palo == jugador.cartas[2].palo) {
             jugador.puntosEnvido = jugador.cartas[1].valorEnvido + jugador.cartas[2].valorEnvido + 20;
-        }
+        } else {
+            let cartaAlta = jugador.cartas.reduce((max, carta) => carta.valorEnvido > max.valorEnvido ? carta : max)
+            jugador.puntosEnvido = cartaAlta.valorEnvido 
+        } 
+    }
 
-        console.log(jugador.nombre)
-        console.log(jugador.puntosEnvido)
-        console.log(jugador)
-        console.log(jugador.cartas[0])
-        console.log(jugador.cartas[1].valorEnvido)
-        console.log(jugador.cartas[2].valorEnvido)
+    calculoTruco(){
+        if(this.truco){
+            if(this.puntosPartida > 0){
+                Swal.fire({
+                    title: "¡Genial!",
+                    text: "Le ganaste esta mano",
+                    imageUrl: "/resources/img/CPUperdio.png",
+                    imageWidth: 200,
+                    imageHeight: 250,
+                    imageAlt: "Custom image"
+                  });
+                  this.user.puntos += 2
+            } else if(this.puntosPartida < 0){
+                Swal.fire({
+                    title: "No se pudo!",
+                    text: "CPU gano esta mano",
+                    imageUrl: "/resources/img/CPUgano.png",
+                    imageWidth: 300,
+                    imageHeight: 250,
+                    imageAlt: "Custom image"
+                  });
+                  this.CPU.puntos += 2
+            } else {
+                Swal.fire({
+                    title: "Empataron",
+                    text: "Ninguno gano la mano",
+                    imageUrl: "/resources/img/empate.png",
+                    imageWidth: 200,
+                    imageHeight: 200,
+                    imageAlt: "Custom image"
+                  });
+            }
+
+        } else {
+            Swal.fire({
+                title: "¿Cartas malas?",
+                text: "No cantaste truco",
+                imageUrl: "/resources/img/noTruco.png",
+                imageWidth: 250,
+                imageHeight: 250,
+                imageAlt: "Custom image"
+              });
+        }
     }
 }
 

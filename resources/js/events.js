@@ -12,6 +12,9 @@ let puntosCPU = document.querySelector('.puntosCPU')
 
 let panel = document.querySelector('.panel')
 let botonEnvido = document.querySelector('button#envido')
+botonEnvido.disabled = true
+let botonTruco = document.querySelector('button#truco')
+botonTruco.disabled = true
 
 let usuarios
 let usuario
@@ -19,7 +22,7 @@ fetch('/../resources/db/usuarios.json')
     .then((response) => response.json())
     .then((data) => usuarios = data)
     .then((usuarios) => usuario = usuarios.find((elm) => (elm) && elm.nombre == user))
-    .catch((error) => console.warn(`Eror: ${error}`))
+    .catch((error) => console.warn(`Error: ${error}`))
 
 let partida = new Partida
 partida.comenzar(user)
@@ -30,7 +33,11 @@ repartir.onclick = () => {
     partida.repartirCartas()
     repartir.disabled = true
     leerCartasRepartidas()
-    if(partida.user.flor){
+    partida.puntosPartida = 0
+    partida.truco = false
+    botonEnvido.disabled = false
+    botonTruco.disabled = false
+    if (partida.user.flor) {
         botonEnvido.innerText = 'Flor'
     } else {
         botonEnvido.innerText = 'Envido'
@@ -49,9 +56,12 @@ const leerCartasRepartidas = () => {
             mesaCPU.innerHTML += `<img src="/resources/img/naipes/${cartaTiradaCPU.cartaTirada.getCarta()}.png" alt="cardMesa${index + 1}" class="p-1 cardMesa">`
             cartasCPU[cartaTiradaCPU.posicion].remove()
             cartasCPU = document.querySelectorAll('.cardCPU')
-            partida.ganadorPartida(cartaTiradaUser, cartaTiradaCPU.cartaTirada)
+            partida.ganadorMano(cartaTiradaUser, cartaTiradaCPU.cartaTirada)
             if (partida.CPU.cartas.length == 0) {
+                botonTruco.disabled = true
+                botonEnvido.disabled = true
                 repartir.disabled = false
+                partida.calculoTruco()
                 puntosUser.innerText = `${user}: ${partida.user.puntos}`
                 puntosCPU.innerText = `CPU: ${partida.CPU.puntos}`
                 verificarPuntos()
@@ -75,15 +85,13 @@ const verificarPuntos = () => {
     let botones = document.querySelector('.botones')
     let gane = true
     if ((puntosUser >= 10 || puntosCPU >= 10) && puntosUser != puntosCPU) {
-        // Declaración de Ganador
         if (puntosUser > puntosCPU) {
             imgMazo.innerHTML = '<img class="mt-5 text-center" src="/resources/img/gane.gif" alt="" srcset="">'
         } else if (puntosUser < puntosCPU) {
             imgMazo.innerHTML = '<img class="mt-5 text-center" src="/resources/img/perdi.gif" alt="" srcset="">'
             gane = false
         }
-        // Habilitar botones para volver a jugar
-        botones.innerHTML = `<button class="btn btn-primary mt-1" id="reiniciar">Reinicia</button>
+        botones.innerHTML = `<button class="btn btn-primary mt-1" id="reiniciar">Reiniciar</button>
                             <button class="btn btn-warning mt-1" id="cambiarUsuario">Cambiar Usuario</button>`
         let reiniciar = document.querySelector('#reiniciar')
         let cambiarUsuario = document.querySelector('#cambiarUsuario')
@@ -94,13 +102,49 @@ const verificarPuntos = () => {
 }
 
 botonEnvido.onclick = () => {
-    if(botonEnvido.innerText == 'Flor'){
-        Swal.fire("¡¡Felicitaciones!! Sumaste 5 ptos con tu flor");
-    } else if(partida.CPU.puntosEnvido > partida.user.puntosEnvido){
-        Swal.fire(`¡¡Lo siento!! CPU tiene ${partida.CPU.puntosEnvido}`);
-    } else if(partida.CPU.puntosEnvido < partida.user.puntosEnvido){
-        Swal.fire(`¡¡FELICITACIONES!! GANASTE`);
+    if (botonEnvido.innerText == 'Flor') {
+        Swal.fire({
+            title: "¡FELICITACIONES!",
+            text: "Sumas 5 ptos con tu Flor",
+            icon: "success"
+        });
+        partida.user.puntos += 5
+    } else if (partida.CPU.puntosEnvido > partida.user.puntosEnvido) {
+        partida.CPU.puntos += 2
+        Swal.fire({
+            title: "Lo Siento 👎",
+            text: `CPU tiene ${partida.CPU.puntosEnvido} y gana 2 ptos`,
+            icon: "error"
+        });
+    } else if (partida.CPU.puntosEnvido < partida.user.puntosEnvido) {
+        Swal.fire({
+            title: "¡FELICITACIONES!",
+            text: `Ganaste con ${partida.user.puntosEnvido} y sumaste 2 ptos`,
+            icon: "success"
+        });
+        partida.user.puntos += 2
+    } else {
+        Swal.fire({
+            title: "¡FELICITACIONES!",
+            text: `¡¡Empataron!! Te doy los puntos a vos por ser amigo de PEPE 😊`,
+            icon: "info"
+        });
+        partida.user.puntos += 2
     }
-    console.log(partida.CPU.puntosEnvido)
-    console.log(partida.user.puntosEnvido)
+    botonEnvido.disabled = true
+}
+
+botonTruco.onclick = () => {
+    partida.truco = true
+    botonTruco.disabled = true
+    botonEnvido.disabled = true
+    Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "Cantaste Truco",
+        showConfirmButton: false,
+        timer: 2000,
+        width: '20em',
+    });
 }

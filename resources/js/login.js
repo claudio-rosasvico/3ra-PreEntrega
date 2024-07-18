@@ -2,7 +2,7 @@ let usuarios
 fetch('./resources/db/usuarios.json')
     .then((response) => response.json())
     .then((data) => usuarios = data)
-    .catch((error) => console.log(`Error: ${error}`))
+    .catch((error) => console.warn(`Error: ${error}`))
 
 localStorage.setItem('user', '')
 let saludo = document.querySelector('#saludo')
