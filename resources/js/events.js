@@ -1,4 +1,3 @@
-let fecha = new Date()
 let user = localStorage.getItem('user')
 let nombreManoUser = document.querySelector('.nombreUser')
 nombreManoUser.innerText = `Tus cartas ${user}`
@@ -12,11 +11,15 @@ let puntosUser = document.querySelector('.puntosUser')
 let puntosCPU = document.querySelector('.puntosCPU')
 
 let panel = document.querySelector('.panel')
-let usuarios = JSON.parse(localStorage.getItem('usuarios'))
-let usuario = usuarios.find((elm) => elm.nombre == user)
-if (user != 'invitado') {
-    usuario.fecha == undefined ? panel.append('Primera vez que jugás') : panel.append(`Tu último juego fue el ${usuario.fecha} y lo ${usuario.gane ? 'GANASTE 🏆' : 'PERDISTE 😒'}`)
-}
+let botonEnvido = document.querySelector('button#envido')
+
+let usuarios
+let usuario
+fetch('/../resources/db/usuarios.json')
+    .then((response) => response.json())
+    .then((data) => usuarios = data)
+    .then((usuarios) => usuario = usuarios.find((elm) => (elm) && elm.nombre == user))
+    .catch((error) => console.warn(`Eror: ${error}`))
 
 let partida = new Partida
 partida.comenzar(user)
@@ -27,6 +30,11 @@ repartir.onclick = () => {
     partida.repartirCartas()
     repartir.disabled = true
     leerCartasRepartidas()
+    if(partida.user.flor){
+        botonEnvido.innerText = 'Flor'
+    } else {
+        botonEnvido.innerText = 'Envido'
+    }
 }
 
 const leerCartasRepartidas = () => {
@@ -66,24 +74,13 @@ const verificarPuntos = () => {
     let imgMazo = document.querySelector('.mazo')
     let botones = document.querySelector('.botones')
     let gane = true
-    if ((puntosUser >= 5 || puntosCPU >= 5) && puntosUser != puntosCPU) {
+    if ((puntosUser >= 10 || puntosCPU >= 10) && puntosUser != puntosCPU) {
         // Declaración de Ganador
         if (puntosUser > puntosCPU) {
             imgMazo.innerHTML = '<img class="mt-5 text-center" src="/resources/img/gane.gif" alt="" srcset="">'
         } else if (puntosUser < puntosCPU) {
             imgMazo.innerHTML = '<img class="mt-5 text-center" src="/resources/img/perdi.gif" alt="" srcset="">'
             gane = false
-        }
-        // Registro de resultado en usuario del localstorage
-        if (user != 'invitado') {
-            usuarios = usuarios.map(usuario => {
-                if (usuario.nombre == user && usuario.fecha == undefined) {
-                    return { ...usuario, fecha: fecha.toLocaleDateString(), gane: gane }
-                } else if ((usuario.nombre == user && usuario.fecha != undefined)) {
-                    return { nombre: usuario.nombre, pass: usuario.pass, fecha: fecha.toLocaleDateString(), gane: gane }
-                }
-            })
-            localStorage.setItem('usuarios', JSON.stringify(usuarios))
         }
         // Habilitar botones para volver a jugar
         botones.innerHTML = `<button class="btn btn-primary mt-1" id="reiniciar">Reinicia</button>
@@ -94,4 +91,16 @@ const verificarPuntos = () => {
         cambiarUsuario.onclick = () => { window.location.href = '/../index.html' }
     }
 
+}
+
+botonEnvido.onclick = () => {
+    if(botonEnvido.innerText == 'Flor'){
+        Swal.fire("¡¡Felicitaciones!! Sumaste 5 ptos con tu flor");
+    } else if(partida.CPU.puntosEnvido > partida.user.puntosEnvido){
+        Swal.fire(`¡¡Lo siento!! CPU tiene ${partida.CPU.puntosEnvido}`);
+    } else if(partida.CPU.puntosEnvido < partida.user.puntosEnvido){
+        Swal.fire(`¡¡FELICITACIONES!! GANASTE`);
+    }
+    console.log(partida.CPU.puntosEnvido)
+    console.log(partida.user.puntosEnvido)
 }

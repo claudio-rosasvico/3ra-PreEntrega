@@ -4,7 +4,8 @@ class Carta {
         this.numero = numero
         this.palo = palo
         this.destapada = false
-        this.valor = this.darValor(numero, palo)
+        this.valorTruco = 0
+        this.valorEnvido = 0
     }
 
     getCarta() {
@@ -23,35 +24,42 @@ class Carta {
         this.destapada = true
     }
 
-    darValor(numero, palo) {
-        if (numero == 1 && palo == 'E') {
-            return 14
+    darValorTruco() {
+        if (this.numero == 1 && this.palo == 'E') {
+            this.valorTruco = 14
         }
-        if (numero == 1 && palo == 'B') {
-            return 13
+        if (this.numero == 1 && this.palo == 'B') {
+            this.valorTruco = 13
         }
-        if (numero == 7 && palo == 'E') {
-            return 12
+        if (this.numero == 7 && this.palo == 'E') {
+            this.valorTruco = 12
         }
-        if (numero == 7 && palo == 'O') {
-            return 11
+        if (this.numero == 7 && this.palo == 'O') {
+            this.valorTruco = 11
         }
-        if (numero == 3 || numero == 2) {
-            return (numero + 7)
+        if (this.numero == 3 || this.numero == 2) {
+            this.valorTruco = (this.numero + 7)
         }
-        if (numero == 1 && (palo == 'O' || palo == 'C')) {
-            return 8
+        if (this.numero == 1 && (this.palo == 'O' || this.palo == 'C')) {
+            this.valorTruco = 8
         }
-        if (numero == 12 || numero == 11 || numero == 10) {
-            return (numero - 5)
+        if (this.numero == 12 || this.numero == 11 || this.numero == 10) {
+            this.valorTruco = (this.numero - 5)
         }
-        if (numero == 7 && (palo == 'B' || palo == 'C')) {
-            return 4
+        if (this.numero == 7 && (this.palo == 'B' || this.palo == 'C')) {
+            this.valorTruco = 4
         }
-        if (numero == 6 || numero == 5 || numero == 4) {
-            return (numero - 3)
+        if (this.numero == 6 || this.numero == 5 || this.numero == 4) {
+            this.valorTruco = (this.numero - 3)
         }
-        return 0;
+    }
+
+    darValorEnvido() {
+        if (this.numero != 10 && this.numero != 11 && this.numero != 12) {
+            this.darValorEnvido = this.numero
+        } else {
+            this.darValorEnvido = 0
+        }
     }
 
 }
@@ -102,6 +110,8 @@ class Jugador {
         this.puntos = 0
         this.user = user
         this.ultimoPartido = {}
+        this.puntosEnvido = 0
+        this.flor = false
     }
 
     verCartas(ubicacion, clase) {
@@ -118,7 +128,7 @@ class Jugador {
             let cartaTirada = this.cartas[posicion]
             cartaTirada.destapada = true
             this.cartas.splice(posicion, 1)
-            return {cartaTirada: cartaTirada, posicion: posicion}
+            return { cartaTirada: cartaTirada, posicion: posicion }
         } else {
             let cartaTirada = this.cartas[posicion]
             return cartaTirada
@@ -148,20 +158,50 @@ class Partida {
         for (let i = 0; i < 3; i++) {
             let cartaUser = naipes.cartas.pop()
             let cartaCPU = naipes.cartas.pop()
+            cartaUser.darValorTruco()
+            cartaCPU.darValorTruco()
+            cartaUser.darValorEnvido()
+            cartaCPU.darValorEnvido()
             this.user.cartas.push(cartaUser)
             this.CPU.cartas.push(cartaCPU)
         }
         this.user.cartas.forEach((elm) => { elm.destaparCarta() })
         this.user.verCartas('.cardsManoUser', 'cardUser')
         this.CPU.verCartas('.cardsManoCPU', 'cardCPU')
+        this.calculoEnvido(this.CPU)
+        this.calculoEnvido(this.user)
     }
 
-    ganadorPartida(cartaUser, cartaCPU){
-        if (cartaUser.valor > cartaCPU.valor) {
+    ganadorPartida(cartaUser, cartaCPU) {
+        if (cartaUser.valorTruco > cartaCPU.valorTruco) {
             this.user.puntos += 1
-        } else if (cartaUser.valor < cartaCPU.valor) {
+        } else if (cartaUser.valorTruco < cartaCPU.valorTruco) {
             this.CPU.puntos += 1
         }
+    }
+
+    calculoEnvido(jugador) {
+        jugador.flor = false;
+        if (jugador.cartas[0].palo == jugador.cartas[1].palo) {
+            if (jugador.cartas[0].palo == jugador.cartas[2].palo) {
+                jugador.flor = true;
+            } else {
+                jugador.puntosEnvido = jugador.cartas[0].valorEnvido + jugador.cartas[1].valorEnvido + 20;
+            };
+        }
+        if (jugador.cartas[0].palo == jugador.cartas[2].palo) {
+            jugador.puntosEnvido = jugador.cartas[0].valorEnvido + jugador.cartas[2].valorEnvido + 20;
+        }
+        if (jugador.cartas[1].palo == jugador.cartas[2].palo) {
+            jugador.puntosEnvido = jugador.cartas[1].valorEnvido + jugador.cartas[2].valorEnvido + 20;
+        }
+
+        console.log(jugador.nombre)
+        console.log(jugador.puntosEnvido)
+        console.log(jugador)
+        console.log(jugador.cartas[0])
+        console.log(jugador.cartas[1].valorEnvido)
+        console.log(jugador.cartas[2].valorEnvido)
     }
 }
 

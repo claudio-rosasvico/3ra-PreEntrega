@@ -1,0 +1,23 @@
+[
+    {
+        "nombre": "CLAUDIO",
+        "contraseña": "123",
+        "img": "claudio"
+    },
+    {
+        "nombre": "JOAQUIN",
+        "contraseña": "tutor",
+        "img": "joaquin"
+    },
+    {
+        "nombre": "FERRAN",
+        "contraseña": "profe",
+        "img": "ferran"
+    },
+    {
+        "nombre": "PEPE",
+        "contraseña": "pepe",
+        "img": "pepe"
+    }
+    
+]
